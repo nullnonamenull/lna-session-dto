@@ -13,4 +13,5 @@ public class SessionMessagesResponseDTO {
     private UUID sessionId;
     private String sessionName;
     private List<MessageDTO> messages;
+
 }
