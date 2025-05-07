@@ -1,6 +1,6 @@
 package com.noname.lnasessiondto;
 
-import com.noname.lnasessiondto.enumerated.MessageAuthor;
+import com.noname.lnasessiondto.enumerated.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +12,6 @@ public class MessageDTO {
 
     private UUID sessionId;
     private String content;
-    private MessageAuthor sender;
+    private Role role;
 
 }
