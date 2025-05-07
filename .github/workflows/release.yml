@@ -31,4 +31,4 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
       - if: steps.rp.outputs.release_created == 'true'
-        run: mvn -B
+        run: mvn -B deploy -DskipTests
