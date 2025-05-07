@@ -1,6 +1,5 @@
 {
   "release-type": "maven",
   "package-name": "lna-session-dto",
-  "path": "lna-session-dto",
   "branches": ["master"]
 }
