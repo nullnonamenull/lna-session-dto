@@ -1,4 +1,4 @@
-name: Test, Install and Auto-release lna-session-dto
+name: Test, Install and Auto-release DTO-lib
 
 on:
   push:
@@ -31,14 +31,42 @@ jobs:
         run: mvn -B clean install
         working-directory: ./lna-session-dto
 
-      - id: release-please
-        uses: googleapis/release-please-action@v4
-        with:
-          token: ${{ secrets.RELEASE_TOKEN }}
-          config-file: release-please-config.json
+      - name: Get current version
+        id: get_version
+        run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+        working-directory: ./lna-session-dto
 
+      - name: Set new version
+        id: set_version
+        run: |
+          CURRENT_VERSION=${{ steps.get_version.outputs.version }}
+          # Remove -SNAPSHOT if present
+          VERSION_WITHOUT_SNAPSHOT=${CURRENT_VERSION%-SNAPSHOT}
+          # Split the version by dots
+          IFS='.' read -ra VERSION_PARTS <<< "$VERSION_WITHOUT_SNAPSHOT"
+          # Increment the patch version (last number)
+          ((VERSION_PARTS[2]++))
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}"
+          # Set the new version
+          mvn versions:set -DnewVersion=$NEW_VERSION
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        working-directory: ./lna-session-dto
+        shell: bash
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Commit new version
+        run: |
+          git add ./lna-session-dto/pom.xml
+          git commit -m "chore: Release version ${{ steps.set_version.outputs.new_version }}"
+          git tag -a "v${{ steps.set_version.outputs.new_version }}" -m "Release v${{ steps.set_version.outputs.new_version }}"
+          git push origin master --tags
+
+      # Deploy to GitHub Packages
       - name: Publish to GitHub Packages
-        if: steps.release-please.outputs.release_created == 'true'
         run: mvn -B deploy -DskipTests
         working-directory: ./lna-session-dto
         env:
