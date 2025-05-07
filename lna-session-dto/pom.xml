@@ -16,6 +16,7 @@
     <name>lna-session-dto</name>
     <description>lna-session-dto</description>
 
+
     <properties>
         <java.version>21</java.version>
     </properties>
