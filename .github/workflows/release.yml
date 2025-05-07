@@ -7,7 +7,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  packages: write
 
 jobs:
   release:
@@ -17,11 +16,12 @@ jobs:
         with: { fetch-depth: 0 }
 
       - id: rp
-        uses: google-github-actions/release-please-action@v4
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
+          config-file: release-please-config.json
 
-      - name: Set up JDK 21
+      - name: Publish to GitHub Packages
         if: steps.rp.outputs.release_created == 'true'
         uses: actions/setup-java@v4
         with:
@@ -30,9 +30,5 @@ jobs:
           cache: maven
           server-id: github
           settings-path: ${{ github.workspace }}
-
-      - name: Deploy to GitHub Packages
-        if: steps.rp.outputs.release_created == 'true'
-        run: mvn -B deploy -P release -DskipTests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: steps.rp.outputs.release_created == 'true'
+        run: mvn -B
