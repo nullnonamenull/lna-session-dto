@@ -12,7 +12,6 @@ public class MessageDTO {
 
     private UUID sessionId;
     private String content;
-
     private Role role;
 
 }
