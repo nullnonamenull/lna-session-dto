@@ -23,8 +23,8 @@ jobs:
           java-version: 21
           cache: maven
           server-id: github
-          server-username: GITHUB_ACTOR
-          server-password: GITHUB_TOKEN
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and install
         run: mvn clean install -B
@@ -33,5 +33,3 @@ jobs:
       - name: Deploy to GitHub Packages
         run: mvn deploy -B -DskipTests
         working-directory: ./lna-session-dto
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
