@@ -29,7 +29,11 @@ jobs:
       - name: Build and install
         run: mvn clean install -B
         working-directory: ./lna-session-dto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Packages
         run: mvn deploy -B -DskipTests
         working-directory: ./lna-session-dto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
