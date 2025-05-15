@@ -11,10 +11,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -23,17 +21,17 @@ jobs:
           java-version: 21
           cache: maven
           server-id: github
-          server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
 
       - name: Build and install
-        run: mvn clean install -B
+        run: mvn -B clean install
         working-directory: ./lna-session-dto
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Packages
-        run: mvn deploy -B -DskipTests
+        run: mvn -B deploy -DskipTests
         working-directory: ./lna-session-dto
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
